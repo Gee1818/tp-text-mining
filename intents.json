@@ -1,0 +1,23 @@
+{
+  "intents": [
+    {"tag": "productos",
+    "patterns":[],
+    "responses":[]
+    },
+    {"tag": "sucursales",
+    "patterns":[],
+    "responses":[]
+    },
+    {"tag": "metodos_de_pago",
+    "patterns":[],
+    "responses":[]
+    },
+    {"tag": "despedida",
+    "patterns":[],
+    "responses":[]
+    },
+    {"tag": "productos",
+    "patterns":[],
+    "responses":[]
+    }
+  ]}
