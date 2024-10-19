@@ -72,7 +72,8 @@ while True:
         print('Buscando repuestos para tu auto...')
 
     else:
-        X = bag_of_words(sentence, all_words).reshape(1, X.shape[0])
+        X = bag_of_words(sentence, all_words)
+        X = X.reshape(1, X.shape[0])
         X = torch.from_numpy(X).to(device)
 
         output = model(X)
