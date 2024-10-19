@@ -44,7 +44,7 @@ car_model = None
 
 # Iniciar interaccion
 bot_name = "FricBot"
-print(f"Hola, soy {bot_name}. En que te puedo ayudar? (escribí 'quit' para salir)")
+print(f"Hola, soy {bot_name}. ¿En qué te puedo ayudar? (escribí 'quit' para salir)")
 
 while True:
     intersection = None
@@ -57,19 +57,19 @@ while True:
     intersection_model = set(sentence).intersection(models)
     
     if intersection_model:
-        car_model = intersection_model.pop()
+        car_model = intersection_model.pop() # ignora multiples coincidencias
         print(
             f"{bot_name}: He detectado que el modelo de tu auto es {car_model.capitalize()}.", 
-            "Escribe 's' para confirmar y buscare el repuesto que aplica a tu vehiculo"
+            "Escribe 's' para confirmar y buscaré el repuesto que aplica a tu vehículo"
         )
     elif intersection_brand:
-        car_brand = intersection_brand.pop()
+        car_brand = intersection_brand.pop() # ignora multiples coincidencias
         print(
             f"{bot_name}: He detectado que la marca de tu auto es {car_brand.capitalize()}.", 
             "¿Podrías decirme el modelo?"
         )
     elif sentence == ["s"] and car_model != None and car_brand != None:
-        print('Buscando repuestos para tu auto...')
+        print('Buscando repuestos para tu vehículo...')
 
     else:
         X = bag_of_words(sentence, all_words)
@@ -88,4 +88,4 @@ while True:
                 if tag == intent["tag"]:
                     print(f"{bot_name}: {random.choice(intent['responses'])}")
         else:
-            print(f"{bot_name}: Lo siento, pero no entiendo...")
+            print(f"{bot_name}: Lo siento, pero no entiendo.")

@@ -5,16 +5,19 @@
     "responses":[]
     },
     {"tag": "sucursales",
-    "patterns":[],
+    "patterns":["sucursal"],
     "responses":[]
     },
     {"tag": "metodos_de_pago",
-    "patterns":[],
-    "responses":[]
+    "patterns":["pago", "pagar", "abonar"],
+    "responses":[
+      "Nuestros medios de pago son débito y transferencias.",
+      "Podés pagar con débito o por transferencia."
+    ]
     },
     {"tag": "despedida",
-    "patterns":[],
-    "responses":[]
+    "patterns":["chau", "adios", "hasta luego"],
+    "responses":["¡Adiós! Espero haberte ayudado."]
     },
     {"tag": "productos",
     "patterns":[],
