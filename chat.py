@@ -1,5 +1,6 @@
 import random
 import json
+import nltk
 import pandas as pd
 
 import torch
@@ -11,7 +12,7 @@ from utils import bag_of_words, tokenize
 # Cargar modelo conversacional
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-with open("intents.json", "r") as json_data:
+with open("intents_orig.json", "r") as json_data:
     intents = json.load(json_data)
 
 FILE = "data.pth"
@@ -53,11 +54,26 @@ while True:
         break
 
     sentence = tokenize(sentence)
+
+    # Distancia de Levenshtein (por si hay typos)
+    best_fit_model = None
+    least_ratio = 0.3 # el nro de operaciones es <= al 30% de len(word)
+    for word in sentence:
+        for modelo in models:
+            ratio = nltk.edit_distance(modelo, word) / len(word)
+            if ratio <= least_ratio:
+                best_fit_model = modelo
+                least_ratio = ratio
+
+
+
     intersection_brand = set(sentence).intersection(brands)
-    intersection_model = set(sentence).intersection(models)
+    #intersection_model = set(sentence).intersection(models)
+    intersection_model = best_fit_model
     
     if intersection_model:
-        car_model = intersection_model.pop() # ignora multiples coincidencias
+        #car_model = intersection_model.pop() # ignora multiples coincidencias
+        car_model = intersection_model
         print(
             f"{bot_name}: He detectado que el modelo de tu auto es {car_model.capitalize()}.", 
             "Escribe 's' para confirmar y buscaré el repuesto que aplica a tu vehículo"
@@ -68,8 +84,9 @@ while True:
             f"{bot_name}: He detectado que la marca de tu auto es {car_brand.capitalize()}.", 
             "¿Podrías decirme el modelo?"
         )
-    elif sentence == ["s"] and car_model != None and car_brand != None:
-        print('Buscando repuestos para tu vehículo...')
+    elif sentence == ["s"] and car_model != None:
+        print(f"{bot_name}: Estos son los repuestos que tenemos para tu vehículo.")
+        print(catalog[catalog.Modelo == car_model.upper()][["Marca", "Modelo", "Anio", "Linea", "Producto"]])
 
     else:
         X = bag_of_words(sentence, all_words)
@@ -84,8 +101,10 @@ while True:
         probs = torch.softmax(output, dim=1)
         prob = probs[0][predicted.item()]
         if prob.item() > 0.75:
-            for intent in intents["intents"]:
-                if tag == intent["tag"]:
-                    print(f"{bot_name}: {random.choice(intent['responses'])}")
+            intent = intents["intents"][tag]
+            print(f"{bot_name}: {random.choice(intent['responses'])}")
+            #for intent in intents["intents"]:
+                #if tag == intent["tag"]:
+                    #print(f"{bot_name}: {random.choice(intent['responses'])}")
         else:
             print(f"{bot_name}: Lo siento, pero no entiendo.")
