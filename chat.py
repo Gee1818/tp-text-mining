@@ -31,7 +31,7 @@ model.eval()
 
 
 # Cargar datos de catalogo
-catalog = pd.read_csv("fricrot_data.csv")
+catalog = pd.read_csv("df_final_sin_anio.csv")
 
 brands = catalog["Marca"].unique()
 models = catalog["Modelo"].unique()
@@ -86,7 +86,7 @@ while True:
         )
     elif sentence == ["s"] and car_model != None:
         print(f"{bot_name}: Estos son los repuestos que tenemos para tu vehículo.")
-        print(catalog[catalog.Modelo == car_model.upper()][["Marca", "Modelo", "Anio", "Linea", "Producto"]])
+        print(catalog[catalog.Modelo == car_model.upper()][["Marca", "Modelo", "Linea", "Producto"]])
 
     else:
         X = bag_of_words(sentence, all_words)
@@ -101,10 +101,10 @@ while True:
         probs = torch.softmax(output, dim=1)
         prob = probs[0][predicted.item()]
         if prob.item() > 0.75:
-            intent = intents["intents"][tag]
-            print(f"{bot_name}: {random.choice(intent['responses'])}")
-            #for intent in intents["intents"]:
-                #if tag == intent["tag"]:
-                    #print(f"{bot_name}: {random.choice(intent['responses'])}")
+            #intent = intents["intents"][tag]
+            #print(f"{bot_name}: {random.choice(intent['responses'])}")
+            for intent in intents["intents"]:
+                if tag == intent["tag"]:
+                    print(f"{bot_name}: {random.choice(intent['responses'])}")
         else:
             print(f"{bot_name}: Lo siento, pero no entiendo.")
