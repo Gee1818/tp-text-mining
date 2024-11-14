@@ -107,11 +107,9 @@ if question := st.chat_input("Escriba su consulta aquí."):
     if ano_match:
         ano = ano_match.group(1)
 
-    if marca != None and modelo != None and ano != None:
-        break
+if marca != None and modelo != None and ano != None:
+    filtered_df = df[(df['Marca'] == marca.upper()) & (df['Modelo'] == modelo.upper()) & (df['Ano_inicial'] <= ano) & (df['Ano_fin'] >= ano)]
 
-filtered_df = df[(df['Marca'] == marca.upper()) & (df['Modelo'] == modelo.upper()) & (df['Ano_inicial'] <= ano) & (df['Ano_fin'] >= ano)]
-
-# Display assistant response in chat message container
-with st.chat_message("assistant"):
-    st.dataframe(filtered_df)
+    # Display assistant response in chat message container
+    with st.chat_message("assistant"):
+        st.dataframe(filtered_df)
