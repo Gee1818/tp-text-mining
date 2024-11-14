@@ -3,15 +3,15 @@ import openpyxl as xl
 from langchain_ollama import ChatOllama
 from langchain_core.output_parsers import StrOutputParser
 from langchain.prompts import PromptTemplate
+import streamlit as st
 import numpy as np
 import re
-
 
 FILE = 'ReporteProductos2.csv'
 
 #MODEL = 'llama3.2'
-#MODEL = 'llama3.1'
-MODEL = 'mistral'
+MODEL = 'llama3.1'
+#MODEL = 'mistral'
 
 
 df = pd.read_csv(FILE, dtype=str)
@@ -24,13 +24,18 @@ df['Mes_fin'] = df['Ano_fin'].str.split('-').str[0]
 
 df["Ano_fin"] = df['Ano_fin'].str.split('-').str[1]
 
-
-
-
-
-
 #df= df[['Codigo', 'Marca', 'Modelo', 'Posicion','Ano_inicial', 'Ano_fin']]
 
+st.title("FricBot")
+
+# Initialize chat history
+if "messages" not in st.session_state:
+    st.session_state.messages = []
+
+# Display chat messages from history on app rerun
+for message in st.session_state.messages:
+    with st.chat_message(message["role"]):
+        st.markdown(message["content"])
 
 model = ChatOllama(model=MODEL, temperature=0)
 
@@ -65,11 +70,14 @@ chain = prompt | model | parser
 
 marca, modelo, ano = None, None, None
 context = ""
-while True:
-    print("******************************************************************************")
-    question = input("Pregunta: ")
-    if question.lower() == "quit":
-        break
+
+
+# React to user input
+if question := st.chat_input("Escriba su consulta aquí."):
+    # Display user message in chat message container
+    st.chat_message("user").markdown(question)
+    # Add user message to chat history
+    st.session_state.messages.append({"role": "user", "content": question})
 
     response = chain.invoke({
         "context": context,
@@ -81,7 +89,11 @@ while True:
 
     context = " ".join(response)
 
-    print(f"FricBot: {response}")
+    # Display assistant response in chat message container
+    with st.chat_message("assistant"):
+        st.markdown(response)
+    # Add assistant response to chat history
+    st.session_state.messages.append({"role": "assistant", "content": response})
 
     # Extracting the car brand, model, and year using regular expressions
     marca_match = re.search(r"Marca:\s*(\w+)", response, re.DOTALL)
@@ -95,14 +107,11 @@ while True:
     if ano_match:
         ano = ano_match.group(1)
 
-    print('current vars')
-    print(f"Marca: {marca}")
-    print(f"Modelo: {modelo}")
-    print(f"Año: {ano}")
-
     if marca != None and modelo != None and ano != None:
         break
 
+filtered_df = df[(df['Marca'] == marca.upper()) & (df['Modelo'] == modelo.upper()) & (df['Ano_inicial'] <= ano) & (df['Ano_fin'] >= ano)]
 
-print(df[(df['Marca'] == marca.upper()) & (df['Modelo'] == modelo.upper()) & (df['Ano_inicial'] <= ano) & (df['Ano_fin'] >= ano)])
-
+# Display assistant response in chat message container
+with st.chat_message("assistant"):
+    st.dataframe(filtered_df)
