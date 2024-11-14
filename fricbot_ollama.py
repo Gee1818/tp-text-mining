@@ -7,22 +7,22 @@ import streamlit as st
 import numpy as np
 import re
 
-FILE = 'ReporteProductos2.csv'
+FILE = 'fricrot_data.csv'
 
 #MODEL = 'llama3.2'
-MODEL = 'llama3.1'
-#MODEL = 'mistral'
+#MODEL = 'llama3.1'
+MODEL = 'mistral'
 
 
 df = pd.read_csv(FILE, dtype=str)
 
-df['Mes_inicial'] = df['Ano_inicial'].str.split('-').str[0]
+#df['Mes_inicial'] = df['Ano_inicial'].str.split('-').str[0]
+#df["Ano_inicial"] = df['Ano_inicial'].str.split('-').str[1]
+#df['Mes_fin'] = df['Ano_fin'].str.split('-').str[0]
+#df["Ano_fin"] = df['Ano_fin'].str.split('-').str[1]
 
-df["Ano_inicial"] = df['Ano_inicial'].str.split('-').str[1]
-
-df['Mes_fin'] = df['Ano_fin'].str.split('-').str[0]
-
-df["Ano_fin"] = df['Ano_fin'].str.split('-').str[1]
+df["Ano_inicial"] = df['Desde'].str.split('-').str[0]
+df["Ano_fin"] = df['Hasta'].str.split('-').str[0]
 
 #df= df[['Codigo', 'Marca', 'Modelo', 'Posicion','Ano_inicial', 'Ano_fin']]
 
