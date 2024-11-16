@@ -19,25 +19,16 @@ df_atributos = pd.read_csv('ReporteProductos_atributos.csv', dtype=str)
 
 print(df_atributos.columns)
 
-df['Mes_inicial'] = df['Ano_inicial'].str.split('-').str[0]
 df["Ano_inicial"] = df['Ano_inicial'].str.split('-').str[1]
-df['Mes_fin'] = df['Ano_fin'].str.split('-').str[0]
 df["Ano_fin"] = df['Ano_fin'].str.split('-').str[1]
 
-# df["Ano_inicial"] = df['Desde'].str.split('-').str[0]
-# df["Ano_fin"] = df['Hasta'].str.split('-').str[0]
-
-# Modificacion
-# nan en la columna de año final imputar valor extremadamente alto
+# Modificacion: reemplazar nan por un valor extremadamente alto
 df['Ano_fin_filtro'] = df['Ano_fin'].replace(np.nan, '2999')
 
 df = df.drop(columns=['Linea'])
 
 df = df.merge(df_atributos[["Codigo", "TipoProducto", "Linea"]], on='Codigo', how='left')
 
-
-
-#df= df[['Codigo', 'Marca', 'Modelo', 'Posicion','Ano_inicial', 'Ano_fin']]
 st.set_page_config(
     layout="wide",
     page_title="FricBot",
